@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generated User Stories</title>
+    <link rel="stylesheet" href="/src/static/styles.css">
+</head>
+<body>
+    <h1>Generated User Stories</h1>
+    {% if user_stories %}
+        <ul>
+        {% for story in user_stories %}
+            <li>
+                <strong>{{ story.story }}</strong><br>
+                Description: {{ story.description }}<br>
+                Effort Points: {{ story.effort_points }}
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No user stories could be generated. Please try again.</p>
+    {% endif %}
+    <a href="/">Back to Home</a>
+</body>
+</html>
