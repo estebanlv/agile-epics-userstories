@@ -1,13 +1,241 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Generated User Stories</title>
-    <link rel="stylesheet" href="/src/static/styles.css">
+    <!-- Responsive Meta Tag -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Google Fonts for better typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        /* Card Styles */
+        .user-stories-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .user-story-card {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 300px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            opacity: 0;
+            animation: fadeIn 0.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+        }
+
+        .user-story-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #3498db;
+            margin-bottom: 10px;
+        }
+
+        .status-tag {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #e74c3c;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 12px;
+            font-size: 0.8em;
+        }
+
+        .status-tag.in-progress {
+            background-color: #f1c40f;
+        }
+
+        .status-tag.completed {
+            background-color: #2ecc71;
+        }
+
+        .description {
+            margin: 10px 0;
+            color: #34495e;
+            max-height: 60px;
+            overflow: hidden;
+            position: relative;
+            transition: max-height 0.3s ease;
+        }
+
+        .description.expanded {
+            max-height: 500px; /* Arbitrary large value */
+        }
+
+        .read-more {
+            color: #3498db;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 5px;
+            display: inline-block;
+        }
+
+        .effort-points {
+            background-color: #2ecc71;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 12px;
+            font-size: 0.9em;
+            display: inline-block;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        /* Tooltip Styles */
+        .effort-points:hover::after {
+            content: 'Effort Points represent the estimated effort required to complete the story.';
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: #fff;
+            padding: 8px;
+            border-radius: 4px;
+            white-space: nowrap;
+            font-size: 0.8em;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s;
+            z-index: 1;
+        }
+
+        .effort-points:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Button Styles */
+        .extend-button {
+            background-color: #2980b9;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, box-shadow 0.3s;
+            margin-top: auto;
+        }
+
+        .extend-button:hover {
+            background-color: #1f6391;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .extend-button:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+
+        /* Extended Info Styles */
+        .extended-info {
+            margin-top: 15px;
+            background-color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                max-height: 0;
+                opacity: 0;
+            }
+            to {
+                max-height: 1000px;
+                opacity: 1;
+            }
+        }
+
+        .extended-info p {
+            margin: 10px 0;
+            color: #2c3e50;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #fff;
+            border-radius: 50%;
+            width: 14px;
+            height: 14px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Back to Home Link */
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 30px;
+            color: #2980b9;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover {
+            color: #1f6391;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 600px) {
+            .user-story-card {
+                width: 100%;
+            }
+            h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+    
     <script>
+        // Function to extend user story
         async function extendStory(button, storyDescription) {
             // Disable the button to prevent multiple clicks
             button.disabled = true;
-            button.innerText = 'Extending...';
+            // Show loading spinner
+            button.innerHTML = '<span class="spinner"></span>Extending...';
 
             try {
                 const response = await fetch('/extend', {
@@ -22,7 +250,7 @@
                     const errorData = await response.json();
                     alert(`Error: ${errorData.error}`);
                     button.disabled = false;
-                    button.innerText = 'Extend Story';
+                    button.innerHTML = 'Extend Story';
                     return;
                 }
 
@@ -64,33 +292,67 @@
 
                 // Append the extended information below the user story
                 button.parentElement.appendChild(extendedDiv);
-
             } catch (error) {
                 console.error('Error:', error);
                 alert('An unexpected error occurred. Please try again.');
             } finally {
                 button.disabled = false;
-                button.innerText = 'Extend Story';
+                button.innerHTML = 'Extend Story';
+            }
+        }
+
+        // Function to toggle description
+        function toggleDescription(button) {
+            const description = button.previousElementSibling;
+            if (description.classList.contains('expanded')) {
+                description.classList.remove('expanded');
+                button.textContent = 'Read More';
+            } else {
+                description.classList.add('expanded');
+                button.textContent = 'Read Less';
             }
         }
     </script>
 </head>
 <body>
     <h1>Generated User Stories</h1>
+
     {% if user_stories %}
-        <ul>
-        {% for story in user_stories %}
-            <li>
-                <strong>{{ story.story }}</strong><br>
-                Description: {{ story.description }}<br>
-                Effort Points: {{ story.effort_points }}<br>
-                <button onclick="extendStory(this, '{{ story.description | escape }}')">Extend Story</button>
-            </li>
-        {% endfor %}
-        </ul>
+        <div class="user-stories-container">
+            {% for story in user_stories %}
+                <div class="user-story-card">
+                    <!-- Status Indicator -->
+                    {% if story.status %}
+                        <div class="status-tag {% if story.status == 'In Progress' %}in-progress{% elif story.status == 'Completed' %}completed{% endif %}">
+                            {{ story.status }}
+                        </div>
+                    {% endif %}
+                    
+                    <!-- User Story Title -->
+                    <div class="user-story-title">{{ story.story }}</div>
+                    
+                    <!-- Effort Points with Tooltip -->
+                    <div class="effort-points" title="Effort Points represent the estimated effort required to complete the story.">
+                        Effort Points: {{ story.effort_points }}
+                    </div>
+                    
+                    <!-- Description with Read More/Less -->
+                    <div class="description">
+                        {{ story.description }}
+                    </div>
+                    {% if story.description|length > 100 %}
+                        <span class="read-more" onclick="toggleDescription(this)">Read More</span>
+                    {% endif %}
+                    
+                    <!-- Extend Story Button -->
+                    <button class="extend-button" onclick="extendStory(this, '{{ story.description | escape }}')">Extend Story</button>
+                </div>
+            {% endfor %}
+        </div>
     {% else %}
         <p>No user stories could be generated. Please try again.</p>
     {% endif %}
-    <a href="/">Back to Home</a>
+
+    <a href="/" class="back-link">Back to Home</a>
 </body>
 </html>
