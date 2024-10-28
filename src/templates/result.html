@@ -3,6 +3,77 @@
 <head>
     <title>Generated User Stories</title>
     <link rel="stylesheet" href="/src/static/styles.css">
+    <script>
+        async function extendStory(button, storyDescription) {
+            // Disable the button to prevent multiple clicks
+            button.disabled = true;
+            button.innerText = 'Extending...';
+
+            try {
+                const response = await fetch('/extend', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ description: storyDescription })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    alert(`Error: ${errorData.error}`);
+                    button.disabled = false;
+                    button.innerText = 'Extend Story';
+                    return;
+                }
+
+                const data = await response.json();
+
+                // Create elements to display extended information
+                const extendedDiv = document.createElement('div');
+                extendedDiv.className = 'extended-info';
+
+                const descriptionP = document.createElement('p');
+                descriptionP.innerHTML = `<strong>Extended Description:</strong> ${data.description}`;
+                extendedDiv.appendChild(descriptionP);
+
+                const subtasksP = document.createElement('p');
+                subtasksP.innerHTML = `<strong>Subtasks:</strong>`;
+                const subtasksList = document.createElement('ul');
+                data.subtasks.forEach(subtask => {
+                    const li = document.createElement('li');
+                    li.textContent = subtask.subtask;
+                    subtasksList.appendChild(li);
+                });
+                subtasksP.appendChild(subtasksList);
+                extendedDiv.appendChild(subtasksP);
+
+                const acceptanceP = document.createElement('p');
+                acceptanceP.innerHTML = `<strong>Acceptance Criteria:</strong>`;
+                const acceptanceList = document.createElement('ul');
+                data.acceptance_criteria.forEach(criterion => {
+                    const li = document.createElement('li');
+                    li.textContent = criterion.criterion;
+                    acceptanceList.appendChild(li);
+                });
+                acceptanceP.appendChild(acceptanceList);
+                extendedDiv.appendChild(acceptanceP);
+
+                const doneP = document.createElement('p');
+                doneP.innerHTML = `<strong>Definition of Done:</strong> ${data.definition_of_done}`;
+                extendedDiv.appendChild(doneP);
+
+                // Append the extended information below the user story
+                button.parentElement.appendChild(extendedDiv);
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An unexpected error occurred. Please try again.');
+            } finally {
+                button.disabled = false;
+                button.innerText = 'Extend Story';
+            }
+        }
+    </script>
 </head>
 <body>
     <h1>Generated User Stories</h1>
@@ -12,7 +83,8 @@
             <li>
                 <strong>{{ story.story }}</strong><br>
                 Description: {{ story.description }}<br>
-                Effort Points: {{ story.effort_points }}
+                Effort Points: {{ story.effort_points }}<br>
+                <button onclick="extendStory(this, '{{ story.description | escape }}')">Extend Story</button>
             </li>
         {% endfor %}
         </ul>

@@ -5,6 +5,10 @@ from src.schemas.user_story import UserStorySchema
 from pydantic import ValidationError
 import json
 from dotenv import load_dotenv
+from aiocache import cached, Cache
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Load environment variables from .env file
 load_dotenv()
@@ -12,6 +16,7 @@ load_dotenv()
 # Initialize OpenAI API key from environment variable
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
+@cached(ttl=3600, cache=Cache.MEMORY)  # Cache results for 1 hour
 async def generate_user_stories(epic: str) -> List[Dict]:
     # Define the messages for the ChatCompletion
     messages = [
@@ -67,7 +72,7 @@ async def generate_user_stories(epic: str) -> List[Dict]:
                     "schema": json_schema
                 }
             },
-            max_tokens=10000,
+            max_tokens=15000,
             temperature=0.7,
         )
 

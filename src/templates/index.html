@@ -8,7 +8,7 @@
     <h1>Epic to User Stories Generator</h1>
     <form action="/generate" method="post">
         <label for="epic">Enter your epic:</label><br>
-        <textarea id="epic" name="epic" rows="10" cols="50" required></textarea><br>
+        <textarea id="epic" name="epic" rows="10" cols="50" required minlength="20" maxlength="1000"></textarea><br>
         <button type="submit">Generate User Stories</button>
     </form>
 </body>

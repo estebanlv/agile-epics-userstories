@@ -4,3 +4,5 @@ jinja2
 openai
 python-dotenv
 pydantic
+slowapi
+aiocache
